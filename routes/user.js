@@ -87,4 +87,20 @@ router.get('/logout',(req,res)=>{
     });
 });
 
+function isLoggedIn(req,res,next){
+    if(req.session && req.session.user){
+        res.locals.user=req.session.user;
+        return next();
+    }
+    res.redirect('/user/signin');
+}
+router.get('/blogify',isLoggedIn,(req,res)=>{
+    const db = req.db;
+    db.query('select * from blogs where createdBy= ?',[req.session.user.id],(err,blogs) => {
+        if(err) throw err;
+        console.log("User in locals:", res.locals.user);
+        res.render('blogify',{blogs});
+    });
+})
+
 module.exports = router;
