@@ -41,7 +41,7 @@ router.post('/signup',(req,res) => {
                     role: user.role,
                     profileImageUrl: user.profileImageUrl
                 };
-                return res.redirect('/');
+                return res.redirect('/home');
             });
         });
     }
@@ -77,13 +77,13 @@ router.post('/signin', (req,res) => {
                 role : user.role,
                 profileImageUrl : user.profileImageUrl
             }
-            res.redirect('/');
+            res.redirect('/home');
         });
 });
 
 router.get('/logout',(req,res)=>{
     req.session.destroy(() => {
-        res.redirect('/');
+        res.redirect('/home');
     });
 });
 

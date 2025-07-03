@@ -3,8 +3,8 @@ const session = require('express-session');
 const path = require('path');
 const userRoute = require('./routes/user');
 const blogRoute = require('./routes/blog');
-const mysql = require('mysql');
-const methodOverride = require('method-override');
+const mysql = require('mysql'); 
+const methodOverride = require('method-override'); //to override post method as delete
 const { error } = require('console');
 
 const app = express();
@@ -28,6 +28,8 @@ app.use(session({
     resave: false,
     saveUninitialized : false,
 }));
+
+
 
 app.use(methodOverride('_method'));
 //Make db available in all routes
@@ -56,6 +58,10 @@ app.use('/user',userRoute);
 app.use('/blog',blogRoute);
 
 app.get('/',(req,res) => {
+    res.render('splash');
+})
+
+app.get('/home',(req,res) => {
     const db = req.db;
     db.query('select * from blogs order by createdAt DESC',(err,blogs) => {
         if(err) throw err;

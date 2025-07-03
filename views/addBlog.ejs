@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('./partials/head') %>
-    <title>Add New Blog</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AddBlog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <%- include('./partials/nav') %>
@@ -21,10 +24,12 @@
                 <textarea name="body" class="form-control" id="body"></textarea>
             </div>
             <div class="mb-3">
-                <button class="btn btn-primary">Submit</button>
+                <button class="btn btn-secondary">Submit</button>
             </div>
         </form>
     </div>
     <%- include('./partials/script') %>
 </body>
 </html>
+    
+    

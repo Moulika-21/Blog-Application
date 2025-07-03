@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('./partials/head') %>
-    <title>HomePage</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <title>Home</title>
 </head>
 <body>
-    <%- include('./partials/nav') %>
-
+    <%- include("./partials/nav") %>
     <div class="container mt-3 ">
         <div class="row row-cols-4">
             <% if (blogs.length === 0) { %>
@@ -18,7 +20,7 @@
                             <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="Cover Image">
                             <div class="card-body">
                                 <h5 class="card-title"><%= blog.title %></h5>
-                                <a href="/blog/<%= blog.id %>" class="btn btn-primary">View</a>
+                                <a href="/blog/<%= blog.id %>" class="btn btn-secondary">View</a>
                             </div>
                         </div>
                     </div>
@@ -26,6 +28,8 @@
             <% } %>
         </div>
     </div>
-    <%- include('./partials/script') %>
+   <%- include("./partials/script") %>
 </body>
 </html>
+    
+    
