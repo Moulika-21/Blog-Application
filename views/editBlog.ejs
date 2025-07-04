@@ -9,7 +9,9 @@
 </head>
 <body>
     <%- include("./partials/nav") %>
-    <div class="container mt-3">
+    <div class="form-wrapper">
+    <div class="glass-form">
+        <h2 class="text-center mb-4">Edit Blog</h2>
         <form action="/blog/edit/<%= blog.id %>" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="coverImage" class="form-label">Cover Image</label>
@@ -28,6 +30,7 @@
                 <button class="btn btn-success">Update</button>
             </div>
         </form>
+    </div>
     </div>
     <%- include("./partials/script") %>
     

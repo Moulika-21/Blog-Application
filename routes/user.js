@@ -1,4 +1,5 @@
 const {Router} = require("express");
+const {transporter} = require('../index');
 const bcrypt = require('bcrypt');
 const router = Router();
 const saltRounds=10;
@@ -33,6 +34,22 @@ router.post('/signup',(req,res) => {
 
             db.query('insert into users set ?',[user],(err,result) => {
                 if(err) throw err;
+
+                const mailOptions ={
+                    from : process.env.EMAIL_USER,
+                    to: email,
+                    subject : "Welcome to Moulika's Blog!",
+                    text: `Hi ${fullName},\n\nThank you for registering on ur blog platform. we're excited to have you onboard -Moulika`
+                };
+                
+                transporter.sendMail(mailOptions,(error,info) => {
+                    if(error) {
+                        console.log("Email error:",error);
+                    }
+                    else{
+                        console.log("Email Sent:",info.response);
+                    }
+                });
 
                 req.session.user = {
                     id: result.insertId,
