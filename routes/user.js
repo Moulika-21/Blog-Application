@@ -1,5 +1,5 @@
 const {Router} = require("express");
-const {transporter} = require('../index');
+const transporter = require('../views/mailer');
 const bcrypt = require('bcrypt');
 const router = Router();
 const saltRounds=10;
@@ -42,6 +42,7 @@ router.post('/signup',(req,res) => {
                     text: `Hi ${fullName},\n\nThank you for registering on ur blog platform. we're excited to have you onboard -Moulika`
                 };
                 
+                console.log("Transporter:", transporter);
                 transporter.sendMail(mailOptions,(error,info) => {
                     if(error) {
                         console.log("Email error:",error);

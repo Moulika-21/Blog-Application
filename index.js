@@ -5,7 +5,6 @@ const path = require('path');
 const userRoute = require('./routes/user');
 const blogRoute = require('./routes/blog');
 const mysql = require('mysql'); 
-const nodemailer = require('nodemailer');
 const methodOverride = require('method-override'); //to override post method as delete
 const { error } = require('console');
 
@@ -32,13 +31,6 @@ app.use(session({
     saveUninitialized : false,
 }));
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth : {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 app.use(methodOverride('_method'));
 //Make db available in all routes
