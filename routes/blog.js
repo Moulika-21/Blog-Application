@@ -35,14 +35,25 @@ router.get('/:id',(req,res) => {
       return res.render('blog',{blog:null, comments: []});
     }
 
-    db.query(`SELECT comments.*, users.fullname AS commenterName, users.profileImageUrl 
+    db.query('select count(*) as totalLikes from likes where blog_id=?',[req.params.id],(err, likeCountResult) => {
+      if(err) throw err;
+      const totalLikes = likeCountResult[0].totalLikes;
+
+      db.query('select * from likes where blog_id =?',[req.params.id],(err,userLikeResult) => {
+        if(err) throw err;
+        const hasLiked= userLikeResult.length >0;
+
+        db.query(`SELECT comments.*, users.fullname AS commenterName, users.profileImageUrl 
          AS commenterImage FROM comments 
          JOIN users ON comments.createdBy = users.id 
          WHERE comments.blogId = ? 
          ORDER BY comments.createdAt DESC`,[req.params.id],(err,commentResult) => {
          if(err) throw err;
-         return res.render('blog',{blog,comments : commentResult});
+         return res.render('blog',{blog,comments : commentResult,totalLikes,hasLiked,user:req.session.user});
+        });
+      });
     });
+    
   });
 });
 
@@ -130,12 +141,54 @@ router.get('/edit/:id', (req, res) => {
 });
 
 
+router.post('/:id/like',async(req,res) => {
+  const db= req.db;
+
+  if (!req.session.user) {
+    return res.redirect('/user/signin'); // or send a 401 Unauthorized
+  }
+  const blogId = req.params.id;
+  const userId = req.session.user.id;
+
+  try{
+   await db.query(
+    'insert into likes(user_id, blog_id) values(?,?)',
+    [userId,blogId]
+   );
+   res.redirect(`/blog/${blogId}`);
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+router.post('/:id/unlike',async(req,res) => {
+  const db= req.db;
+  if (!req.session.user) {
+    return res.redirect('/user/signin'); 
+  }
+  const blogId = req.params.id;
+  const userId = req.session.user.id;
+
+  try{
+   await db.query(
+    'delete from likes where user_id=? and blog_id= ?',
+    [userId,blogId]
+   );
+   res.redirect(`/blog/${blogId}`);
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).send('Something went wrong');
+  }
+});
 
 router.delete('/delete/:id',(req,res) => {
   const db=req.db;
   db.query('delete from blogs where id = ?',[req.params.id],(err,res) => {
     if(err) throw err;
-    return res.render('blogify');
+    return res.render('profile');
   })
 })
 

@@ -3,6 +3,19 @@ const transporter = require('../views/mailer');
 const bcrypt = require('bcrypt');
 const router = Router();
 const saltRounds=10;
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.resolve('./public/uploads/'));
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 router.get("/signin", (req,res) => {
     return res.render("signin");
@@ -59,7 +72,7 @@ router.post('/signup',(req,res) => {
                     role: user.role,
                     profileImageUrl: user.profileImageUrl
                 };
-                return res.redirect('/home');
+                return res.redirect('/signin');
             });
         });
     }
@@ -112,13 +125,56 @@ function isLoggedIn(req,res,next){
     }
     res.redirect('/user/signin');
 }
-router.get('/blogify',isLoggedIn,(req,res)=>{
+router.get('/profile',isLoggedIn,(req,res)=>{
     const db = req.db;
-    db.query('select * from blogs where createdBy= ?',[req.session.user.id],(err,blogs) => {
+    db.query('select fullname,email,profileImageUrl from users where id= ?',[req.session.user.id],(err,blogs) => {
         if(err) throw err;
         console.log("User in locals:", res.locals.user);
-        res.render('blogify',{blogs});
+        const user=blogs[0];
+
+        db.query('SELECT id, title, coverImageURL, createdAt FROM blogs WHERE createdBy = ? ORDER BY createdAt DESC', [req.session.user.id], (err, blogResults) => {
+            if (err) throw err;
+            res.render('profile',{user,blogs:blogResults});
+        });
     });
-})
+});
+
+router.get('/edit-profile', isLoggedIn, (req, res) => {
+  const db = req.db;
+  const userId = req.session.user.id;
+
+  db.query('SELECT * FROM users WHERE id = ?', [userId], (err, result) => {
+    if (err) throw err;
+    const user = result[0];
+    res.render('editProfile', { user });
+  });
+});
+
+router.post('/edit-profile', isLoggedIn, upload.single('profileImage'), (req, res) => {
+  const db = req.db;
+  const userId = req.session.user.id;
+  const { fullname, email } = req.body;
+
+  const updateData = [fullname, email];
+  let query = 'UPDATE users SET fullname = ?, email = ?';
+
+  if (req.file) {
+    const imagePath = `/uploads/${req.file.filename}`;
+    query += ', profileImageUrl = ?';
+    updateData.push(imagePath);
+  }
+
+  query += ' WHERE id = ?';
+  updateData.push(userId);
+
+  db.query(query, updateData, (err, result) => {
+    if (err) throw err;
+    req.session.user.fullname = fullname;
+    req.session.user.email = email;
+    if (req.file) req.session.user.profileImageUrl = `/uploads/${req.file.filename}`;
+
+    res.redirect('/user/profile');
+  });
+});
 
 module.exports = router;
