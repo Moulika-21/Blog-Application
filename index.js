@@ -64,20 +64,54 @@ app.get('/',(req,res) => {
 
 app.get('/home',(req,res) => {
     const db = req.db;
-    db.query('select * from blogs order by createdAt DESC',(err,blogs) => {
+     const query = `
+        SELECT blogs.*, categories.name AS categoryName 
+        FROM blogs 
+        LEFT JOIN categories ON blogs.category_id = categories.id 
+        ORDER BY categories.name, blogs.createdAt DESC`;
+
+    db.query(query,(err,results ) => {
         if(err) throw err;
         console.log("User in locals:", res.locals.user);
-        res.render('home',{blogs,error: req.query.error || null});
+
+        const groupedBlogs = results.reduce((acc, blog) => { //.reduce() is used to transform an array into a single value — in this case,
+        //  into an object grouped by category and acc means accumulator which is similar to results.forEach().
+        
+            const category = blog.categoryName || 'Uncategorized';
+            if (!acc[category]) acc[category] = [];
+            acc[category].push(blog);
+            return acc;
+        }, {});
+        
+
+        res.render('home',{groupedBlogs,error: req.query.error || null});
     });
 });
 
 app.get('/search',(req,res) => {
     const searchTerm = `%${req.query.term}%`;
     console.log('search term:',searchTerm);
-    const query ='select * from blogs where title like ? or body like ?';
-    db.query(query,[searchTerm, searchTerm],(err,result) => {
+
+    const query =` SELECT blogs.*, categories.name AS categoryName 
+        FROM blogs 
+        LEFT JOIN categories ON blogs.category_id = categories.id 
+        WHERE blogs.title LIKE ? OR blogs.body LIKE ? OR categories.name LIKE ?
+        ORDER BY categories.name, blogs.createdAt DESC`;
+
+    db.query(query,[searchTerm, searchTerm, searchTerm],(err,results) => {
         if(err) throw err;
-        res.render('home',{blogs: result});
+
+        const groupedBlogs = {};
+        results.forEach(blog => {
+            const category = blog.categoryName || 'Uncategorized';
+            if (!groupedBlogs[category]) {
+                groupedBlogs[category] = [];
+            }
+            groupedBlogs[category].push(blog);
+        });
+
+        console.log("Grouped Blogs:", groupedBlogs);
+        res.render('home',{groupedBlogs});
     });
 });
 

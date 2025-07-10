@@ -14,7 +14,25 @@
        body::-webkit-scrollbar {
         display: none;           
     }
+    pre {
+    white-space: pre-wrap;      /* wraps long lines */
+    word-wrap: break-word;      /* breaks long words */
+    overflow-x: auto;           /* scrolls only if absolutely needed */
+    max-width: 100%;
+  }
 
+  /* img {
+    max-width: 100%;
+    height: auto;
+  } */
+
+  a {
+    text-decoration: none;  
+  }
+
+  form {
+    display: inline; 
+  }
     </style>
 </head>
 <body>
@@ -44,16 +62,20 @@
     </div>
 
     <div class="container mt-4">
-        <img src="<%= blog.profileImageUrl %>" width="50px" />
+        <% let profileImage = blog.profileImageUrl && blog.profileImageUrl !== 'default.jpg' ? blog.profileImageUrl.startsWith('/uploads/') 
+        ? blog.profileImageUrl : '/uploads/' + blog.profileImageUrl : '/uploads/default.jpg';  %>
+        <img src="<%= profileImage %>" width="50px" />
         <%= blog.fullname %>
     </div>
 
     <div class="container mt-4">
         <% if(locals.user) { %>
         <form method="POST" action="/blog/<%= blog.id %>/<%= hasLiked ? 'unlike' : 'like' %>">
-            <button type="submit">
-                <%=hasLiked ? 'Unlike' : 'Like' %> ❤️
-            </button>
+            <span>
+            <a href="#" style="text-decoration: none; color: inherit;" onclick="this.closest('form').submit();">
+                <%= hasLiked ? '👎 Unlike' : '👍 Like' %>
+            </a>
+        </span>
         </form>
         <% } %>
         <span><%= totalLikes %> Likes</span>
@@ -73,9 +95,11 @@
         <div class="mt-3">
             <% comments.forEach(comment => { %>
                 <div>
-                    <img src="/uploads/<%= comment.commenterImage %>" width="50px" />
+                    <% let commenterImage = comment.commenterImage && comment.commenterImage !== 'default.jpg' ? comment.commenterImage.startsWith('/uploads/') 
+                    ? comment.commenterImage : '/uploads/' + comment.commenterImage : '/images/default.jpg';  %>
+                    <img src="<%= commenterImage %>" width="50px" />
                     <%= comment.commenterName %>:
-                    <pre><%= comment.content %></pre>
+                    <%= comment.content %>
                 </div>
             <% }) %>
         </div>

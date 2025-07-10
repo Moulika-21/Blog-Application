@@ -177,4 +177,25 @@ router.post('/edit-profile', isLoggedIn, upload.single('profileImage'), (req, re
   });
 });
 
+router.get('/analytics',isLoggedIn,(req,res) => {
+    const db = req.db;
+    const userId = req.session.user.id;
+
+    db.query(`select blogs.title, 
+        COUNT(DISTINCT blog_views.id) as views,
+        COUNT(DISTINCT likes.id) as likes,
+        COUNT(DISTINCT comments.id) as comments
+    from blogs 
+    left join blog_views on blogs.id = blog_views.blog_id
+    left join likes on blogs.id = likes.blog_id 
+    left join comments on blogs.id = comments.blogId
+    where blogs.createdBy = ? 
+    group by blogs.id`,
+    [userId],(err,result) => {
+        if(err) throw err;
+        res.render('analytics', { analyticsData : result});
+    }
+);
+});
+
 module.exports = router;

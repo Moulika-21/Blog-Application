@@ -13,28 +13,59 @@
     body::-webkit-scrollbar {
         display: none;            
     }
+    .scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 1rem;
+}
+
+
+.scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
     </style>
 </head>
 <body>
     <%- include("./partials/nav") %>
-    <div class="container mt-3 ">
-        <div class="row row-cols-4">
-            <% if (blogs.length === 0) { %>
-                <p>No blogs yet. Be the first to add one!</p>
-            <% } else { %>
-                <% blogs.forEach(blog => { %>
-                    <div class="col">
-                        <div class="card col" style="width: 18rem;">
-                            <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="Cover Image">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= blog.title %></h5>
-                                <a href="/blog/<%= blog.id %>" class="btn btn-secondary">View</a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="container mt-4 border rounded p-4 shadow-sm bg-light">
+    <div class="container mt-4">
+        <% if (!groupedBlogs || Object.keys(groupedBlogs).length === 0) { %>
+            <div class="alert alert-warning text-center">
+                No blogs found for your search.
+            </div>
+        <% } else { %>
+            <% Object.keys(groupedBlogs).forEach(category => { %>
+            <h3 class="mt-5"><%= category %></h3>
+
+            <div class="scroll-container mb-4">
+             <% groupedBlogs[category].forEach(blog => { %>
+                <div class="card me-3" style="min-width: 18rem;">
+                <img src="<%= blog.coverImageURL %>" class="card-img-top" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                <h5 class="card-title"><%= blog.title %></h5>
+                <a href="/blog/<%= blog.id %>" class="btn btn-sm btn-secondary">View</a>
+                </div>
+                </div>
                 <% }) %>
-            <% } %>
-        </div>
+            </div>
+            <% }) %>
+        <% } %>
+    </div>
     </div>
    <%- include("./partials/script") %>
 </body>

@@ -49,6 +49,7 @@
             <h3><%= user.fullname %></h3>
             <p><%= user.email %></p>
             <a href="/user/edit-profile" class="btn btn-sm btn-outline-secondary">Edit Profile</a> 
+            <a href="/user/analytics" class="btn btn-sm btn-outline-dark">View Analytics</a>
         </div>
     </div>
 
@@ -59,11 +60,11 @@
             <% } else { %>
                 <% blogs.forEach(blog => { %>
                     <div class="col">
-                        <div class="card col" style="width: 18rem;">
-                            <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="Cover Image">
+                        <div class="card me-3" style="min-width: 18rem;">
+                            <img src="<%= blog.coverImageURL %>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Cover Image">
                             <div class="card-body">
                                 <h5 class="card-title"><%= blog.title %></h5>
-                                <a href="/blog/<%= blog.id %>" class="btn btn-secondary">View</a>
+                                <a href="/blog/<%= blog.id %>" class="btn btn-sm btn-secondary">View</a>
                                 <a href="/blog/edit/<%= blog.id %>" class="btn btn-secondary">Edit</a>
                                 <form action="/blog/delete/<%= blog.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this blog?');">
                                     <button type="submit" class="btn btn-danger mt-3">Delete Blog</button>

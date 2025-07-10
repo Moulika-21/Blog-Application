@@ -17,13 +17,24 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 router.get('/add-new',(req,res) => {
+  const db = req.db;
+  db.query('select * from categories',(err, categories) => {
+    if(err) throw err;
     return res.render('addBlog',{
-        user : req.session.user
+        user : req.session.user, categories
     });
+  });
 });
 
 router.get('/:id',(req,res) => {
   const db = req.db;
+  const blog_id = req.params.id;
+  const user_id = req.session.user ? req.session.user.id : null;
+
+  db.query("insert into blog_views (blog_id,user_id) values(?,?)",[blog_id,user_id],(err) => {
+    if (err) console.error('Error recording view:', err);
+  });
+
   db.query("SELECT blogs.*, users.fullname, users.profileImageUrl FROM blogs JOIN users ON blogs.createdBy = users.id WHERE blogs.id = ?",[req.params.id],(err,result) => {
     if(err) throw err;
 
@@ -67,12 +78,12 @@ router.post('/comment/:blogId' ,(req,res) => {
 });
 
 router.post('/',upload.single("coverImage"),(req,res) => {
-    const { title,body } =req.body;
+    const { title,body, category_id } =req.body;
     const db = req.db;
-    if(!title || !body || !req.file){
+    if(!title || !body || !req.file || category_id){
         return res.render("/",{error : 'All fields are required'});
     }
-    const blog = {title : title, body :body , coverImageUrl : `/uploads/${req.file.filename}`, createdBy : req.session.user.id} ;
+    const blog = {title : title, body :body , coverImageUrl : `/uploads/${req.file.filename}`, createdBy : req.session.user.id, category_id} ;
     db.query('insert into blogs set ?',blog ,(err,result) => {
         if(err) throw err;
         return res.redirect(`/blog/${result.insertId}`);
