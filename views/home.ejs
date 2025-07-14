@@ -7,41 +7,118 @@
     <link rel="stylesheet" href="/style.css">
     <title>Home</title>
     <style>
-        body, html {
+      main {
+        flex: 1;
+      }
+      body, html {
         overflow-y: auto;   
-    }
+        overflow-x: hidden;
+        margin: 0;
+      }
+      html{
+        height:100%;
+        position: relative;
+      }
     body::-webkit-scrollbar {
+        padding-top : 70px;
         display: none;            
     }
     .scroll-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 1rem;
-}
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 1rem;
+    }
 
+    .scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
 
-.scroll-container::-webkit-scrollbar {
-  height: 8px;
-}
+    .scroll-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
 
-.scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
 
-.scroll-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
 
-.scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+    .banner{
+      width: 1310px;
+      height: 140px;
+      background-image: url('images/blog-1.avif');
+      background-size: cover;
+      background-position: 70% 30%;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      position: relative;
+      border-radius: 15px;
+      margin: 40px auto;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
 
+    .overlay {
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overlay p{
+      color: white;
+      font-size: 35px;
+      font-weight: bold;
+      margin: 0;
+      font-family: sans-serif;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+    }
+
+    .welcome-text{
+      max-width: 750px;
+      margin: 40px auto;
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+    }
+    .welcome-text h2{
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .welcome-text p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+  <div class="background-layer"></div>
+
     <%- include("./partials/nav") %>
+
+    <main class="flex-grow-1">
+    <div class="banner">
+      <div class="overlay">
+        <p>Read Our Blogs</p>
+      </div>
+    </div>
+
+    <section class="welcome-text">
+      <h2>Welcome to Your Creative Space</h2>
+      <p>
+        Take a deep breath, let your thoughts flow, and turn them into stories the world needs to hear.<br>
+      </p>
+      <p>💡Don't just think it.Blog it</p>
+    </section>
+
     <div class="container mt-4 border rounded p-4 shadow-sm bg-light">
     <div class="container mt-4">
         <% if (!groupedBlogs || Object.keys(groupedBlogs).length === 0) { %>
@@ -67,7 +144,10 @@
         <% } %>
     </div>
     </div>
+    </main>
    <%- include("./partials/script") %>
+   <%- include("./partials/tail") %>
+   
 </body>
 </html>
     

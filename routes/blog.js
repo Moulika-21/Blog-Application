@@ -80,7 +80,7 @@ router.post('/comment/:blogId' ,(req,res) => {
 router.post('/',upload.single("coverImage"),(req,res) => {
     const { title,body, category_id } =req.body;
     const db = req.db;
-    if(!title || !body || !req.file || category_id){
+    if(!title || !body || !req.file || !category_id){
         return res.render("/",{error : 'All fields are required'});
     }
     const blog = {title : title, body :body , coverImageUrl : `/uploads/${req.file.filename}`, createdBy : req.session.user.id, category_id} ;

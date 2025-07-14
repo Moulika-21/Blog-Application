@@ -9,15 +9,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
      <style>
+        main {
+            flex: 1;
+        }
         body, html {
-            overflow-y: auto;   
+            overflow-y: auto;  
+            height: 100%;
+            margin: 0;
         }
         body::-webkit-scrollbar {
             display: none;            
         }
     </style>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    <div class="background-layer"></div>
     <%- include("./partials/nav") %>
+
+    <main class="flex-grow-1">
     <div class="container mt-5">
     <h2 class="text-center mb-4">Your Blog Analytics</h2>
     <canvas id="blogChart" width="600" height="400"></canvas>
@@ -64,7 +72,8 @@
             }
         });
     </script>
-
+    </main>
     <%- include("./partials/script") %>
+    <%- include("./partials/tail") %>
 </body>
 </html>
