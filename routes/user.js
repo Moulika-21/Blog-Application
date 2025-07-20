@@ -52,7 +52,7 @@ router.post('/signup',(req,res) => {
                     from : process.env.EMAIL_USER,
                     to: email,
                     subject : "Welcome to Moulika's Blog!",
-                    text: `Hi ${fullName},\n\nThank you for registering on ur blog platform. we're excited to have you onboard -Moulika`
+                    text: `Hi ${fullName},\n\nThank you for registering on our blog platform. we're excited to have you onboard -Moulika`
                 };
                 
                 console.log("Transporter:", transporter);
@@ -185,17 +185,17 @@ router.get('/analytics',isLoggedIn,(req,res) => {
         COUNT(DISTINCT blog_views.id) as views,
         COUNT(DISTINCT likes.id) as likes,
         COUNT(DISTINCT comments.id) as comments
-    from blogs 
-    left join blog_views on blogs.id = blog_views.blog_id
-    left join likes on blogs.id = likes.blog_id 
-    left join comments on blogs.id = comments.blogId
-    where blogs.createdBy = ? 
-    group by blogs.id`,
-    [userId],(err,result) => {
-        if(err) throw err;
-        res.render('analytics', { analyticsData : result});
-    }
-);
+        from blogs 
+        left join blog_views on blogs.id = blog_views.blog_id
+        left join likes on blogs.id = likes.blog_id 
+        left join comments on blogs.id = comments.blogId
+        where blogs.createdBy = ? 
+        group by blogs.id`,
+        [userId],(err,result) => {
+            if(err) throw err;
+            res.render('analytics', { analyticsData : result});
+        }
+    );
 });
 
 module.exports = router;

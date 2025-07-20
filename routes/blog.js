@@ -156,7 +156,7 @@ router.post('/:id/like',async(req,res) => {
   const db= req.db;
 
   if (!req.session.user) {
-    return res.redirect('/user/signin'); // or send a 401 Unauthorized
+    return res.redirect('/user/signin'); 
   }
   const blogId = req.params.id;
   const userId = req.session.user.id;
